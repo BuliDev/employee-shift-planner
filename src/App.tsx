@@ -1,8 +1,7 @@
 export default function App() {
   return (
-    <div style={{ padding: 24, fontFamily: "system-ui" }}>
-      <h1>Employee Shift Planner</h1>
-      <p>Day 1: project setup</p>
+    <div className="p-8 bg-slate-100 min-h-screen">
+      <h1 className="text-2xl font-semibold text-blue-600">Tailwind works</h1>
     </div>
   );
 }
