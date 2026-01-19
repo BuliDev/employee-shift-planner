@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import PageCard from "../components/PageCard.tsx";
+import WeeklyGrid from "../features/schedule/WeeklyGrid.tsx";
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -60,12 +61,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <main className="p-6">
             {activePage === "dashboard" && children}
 
-            {activePage === "schedule" && (
-              <PageCard
-                title="Schedule"
-                description="Manage and view the shift schedule here."
-              />
-            )}
+            {activePage === "schedule" && <WeeklyGrid />}
 
             {activePage === "employees" && (
               <PageCard
