@@ -1,7 +1,7 @@
 import type { FormEvent } from "react";
 import { useLocalStorageState } from "../../lib/useLocalStorage";
 import type { Employee, Shift } from "../../types/models";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type Day = {
   key: string;
@@ -81,6 +81,7 @@ const WeeklyGrid = () => {
   const [startTime, setStartTime] = useState("06:00");
   const [endTime, setEndTime] = useState("14:00");
   const [error, setError] = useState<string | null>(null);
+  const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
 
   const getShiftForCell = (employeeId: string, dayKey: Day["key"]) => {
     const date = WEEK_DAYS[dayKey];
@@ -103,6 +104,35 @@ const WeeklyGrid = () => {
     };
   };
 
+  const getDayKeyFromDate = (date: string): Day["key"] | null => {
+    const entry = Object.entries(WEEK_DAYS).find(([, d]) => d === date);
+    return (entry?.[0] as Day["key"]) ?? null;
+  };
+
+  const startEditShift = (shift: Shift) => {
+    setError(null);
+    setEditingShiftId(shift.id);
+
+    setSelectedEmployeeId(shift.employeeId);
+
+    const dayKey = getDayKeyFromDate(shift.date);
+    if (dayKey) setSelectedDayKey(dayKey);
+
+    setSelectedType(shift.type);
+
+    if (shift.type !== "DAY_OFF") {
+      setStartTime(shift.startTime);
+      setEndTime(shift.endTime);
+    } else {
+      setStartTime("06:00");
+      setEndTime("14:00");
+    }
+  };
+
+  const updateShift = (updated: Shift) => {
+    setShifts(shifts.map((s) => (s.id === updated.id ? updated : s)));
+  };
+
   const handleAddShift = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -113,6 +143,23 @@ const WeeklyGrid = () => {
     }
 
     const date = WEEK_DAYS[selectedDayKey];
+
+    const payload = {
+      employeeId: selectedEmployeeId,
+      date,
+      startTime: selectedType === "DAY_OFF" ? "00:00" : startTime,
+      endTime: selectedType === "DAY_OFF" ? "00:00" : endTime,
+      type: selectedType,
+    };
+
+    if (editingShiftId) {
+      const updated: Shift = { id: editingShiftId, ...payload };
+
+      updateShift(updated);
+      setEditingShiftId(null);
+      setError(null);
+      return;
+    }
 
     const existing = shifts.find(
       (s) => s.employeeId === selectedEmployeeId && s.date === date
@@ -134,6 +181,20 @@ const WeeklyGrid = () => {
 
     setShifts([...shifts, newShift]);
   };
+
+  const cancelEdit = () => {
+    setEditingShiftId(null);
+    setError(null);
+  };
+
+  const handleDeleteShift = (shiftId: string) => {
+    if (editingShiftId === shiftId) {
+      setEditingShiftId(null);
+    }
+
+    setShifts(shifts.filter((s) => s.id !== shiftId));
+  };
+
   return (
     <div className="rounded-md border border-slate-200 bg-white">
       <form onSubmit={handleAddShift} className="border-b border-slate-200 p-4">
@@ -216,12 +277,24 @@ const WeeklyGrid = () => {
             <div />
           )}
 
-          <button
-            type="submit"
-            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Add shift
-          </button>
+          <div className="flex items-center gap-2">
+            {editingShiftId && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              {editingShiftId ? "Save shift" : "Add shift"}
+            </button>
+          </div>
         </div>
       </form>
 
@@ -265,14 +338,30 @@ const WeeklyGrid = () => {
                       (() => {
                         const badge = getBadge(shift);
                         return (
-                          <span
-                            className={[
-                              "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
-                              badge.className,
-                            ].join(" ")}
-                          >
-                            {badge.label}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => startEditShift(shift)}
+                              className={[
+                                "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
+                                badge.className,
+                                "hover:opacity-80",
+                              ].join(" ")}
+                              title="Edit shift"
+                            >
+                              {badge.label}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteShift(shift.id)}
+                              className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                              title="Delete shift"
+                              aria-label="Delete shift"
+                            >
+                              ✕
+                            </button>
+                          </div>
                         );
                       })()
                     )}
