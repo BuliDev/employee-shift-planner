@@ -1,5 +1,7 @@
+import type { FormEvent } from "react";
 import { useLocalStorageState } from "../../lib/useLocalStorage";
 import type { Employee, Shift } from "../../types/models";
+import { useMemo, useState } from "react";
 
 type Day = {
   key: string;
@@ -71,6 +73,14 @@ const WeeklyGrid = () => {
     "shift-planner.shifts",
     SEED_SHIFTS
   );
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(
+    EMPLOYEES[0]?.id ?? ""
+  );
+  const [selectedDayKey, setSelectedDayKey] = useState<Day["key"]>("mon");
+  const [selectedType, setSelectedType] = useState<Shift["type"]>("EARLY");
+  const [startTime, setStartTime] = useState("06:00");
+  const [endTime, setEndTime] = useState("14:00");
+  const [error, setError] = useState<string | null>(null);
 
   const getShiftForCell = (employeeId: string, dayKey: Day["key"]) => {
     const date = WEEK_DAYS[dayKey];
@@ -92,8 +102,129 @@ const WeeklyGrid = () => {
       className: "bg-blue-50 text-blue-700",
     };
   };
+
+  const handleAddShift = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!selectedEmployeeId) {
+      setError("Please select an employee.");
+      return;
+    }
+
+    const date = WEEK_DAYS[selectedDayKey];
+
+    const existing = shifts.find(
+      (s) => s.employeeId === selectedEmployeeId && s.date === date
+    );
+
+    if (existing) {
+      setError("Shift already exists for this employee on the selected day.");
+      return;
+    }
+
+    const newShift: Shift = {
+      id: crypto.randomUUID(),
+      employeeId: selectedEmployeeId,
+      date,
+      startTime: selectedType === "DAY_OFF" ? "00:00" : startTime,
+      endTime: selectedType === "DAY_OFF" ? "00:00" : endTime,
+      type: selectedType,
+    };
+
+    setShifts([...shifts, newShift]);
+  };
   return (
     <div className="rounded-md border border-slate-200 bg-white">
+      <form onSubmit={handleAddShift} className="border-b border-slate-200 p-4">
+        <div className="grid gap-3 sm:grid-cols-5">
+          {/* Employee */}
+          <label className="grid gap-1 text-sm">
+            <span className="text-slate-600">Employee</span>
+            <select
+              value={selectedEmployeeId}
+              onChange={(e) => setSelectedEmployeeId(e.target.value)}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2"
+            >
+              {EMPLOYEES.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {/* Day */}
+          <label className="grid gap-1 text-sm">
+            <span className="text-slate-600">Day</span>
+            <select
+              value={selectedDayKey}
+              onChange={(e) => setSelectedDayKey(e.target.value as Day["key"])}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2"
+            >
+              {DAYS.map((d) => (
+                <option key={d.key} value={d.key}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {/* Type */}
+          <label className="grid gap-1 text-sm">
+            <span className="text-slate-600">Type</span>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value as Shift["type"])}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2"
+            >
+              <option value="EARLY">EARLY</option>
+              <option value="LATE">LATE</option>
+              <option value="DAY_OFF">DAY_OFF</option>
+            </select>
+          </label>
+
+          {/* Start */}
+          <label className="grid gap-1 text-sm">
+            <span className="text-slate-600">Start</span>
+            <input
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              disabled={selectedType === "DAY_OFF"}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2 disabled:opacity-50"
+            />
+          </label>
+
+          {/* End */}
+          <label className="grid gap-1 text-sm">
+            <span className="text-slate-600">End</span>
+            <input
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              disabled={selectedType === "DAY_OFF"}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2 disabled:opacity-50"
+            />
+          </label>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between">
+          {error ? (
+            <div className="text-sm text-red-600">{error}</div>
+          ) : (
+            <div />
+          )}
+
+          <button
+            type="submit"
+            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Add shift
+          </button>
+        </div>
+      </form>
+
       <div className="max-h-[420px] overflow-auto">
         {/* Header row */}
         <div className="sticky top-0 z-20 grid grid-cols-8 border-b border-slate-200 bg-slate-50 shadow-sm">
