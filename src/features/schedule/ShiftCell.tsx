@@ -13,38 +13,51 @@ export function ShiftCell(props: ShiftCellProps) {
     return <div className="text-xs text-slate-400">—</div>;
   }
 
-  const badge =
-    shift.type === "DAY_OFF"
-      ? { label: "OFF", className: "bg-slate-100 text-slate-700" }
-      : {
-          label: `${shift.type} ${shift.startTime}-${shift.endTime}`,
-          className: "bg-blue-50 text-blue-700",
-        };
+  const isOff = shift.type === "DAY_OFF";
+
+  const timeLabel = isOff ? "Day off" : `${shift.startTime}–${shift.endTime}`;
+  const typeLabel = isOff ? "OFF" : shift.type;
+
+  const fullLabel = isOff
+    ? "OFF"
+    : `${shift.type} ${shift.startTime}–${shift.endTime}`;
+
+  const badgeClass = isOff
+    ? "bg-slate-100 text-slate-700"
+    : "bg-blue-50 text-blue-700";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="grid gap-1">
+      {/* Line 1: time (click = edit) */}
       <button
         type="button"
         onClick={() => onEdit(shift)}
         className={[
-          "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
-          badge.className,
+          "w-full rounded-md px-2 py-1 text-left text-xs font-medium",
+          badgeClass,
           "hover:opacity-80",
         ].join(" ")}
-        title="Edit shift"
+        title={fullLabel}
       >
-        {badge.label}
+        {timeLabel}
       </button>
 
-      <button
-        type="button"
-        onClick={() => onDelete(shift.id)}
-        className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
-        title="Delete shift"
-        aria-label="Delete shift"
-      >
-        ✕
-      </button>
+      {/* Line 2: type + delete */}
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-medium text-slate-600">
+          {typeLabel}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onDelete(shift.id)}
+          className="shrink-0 rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+          title="Delete shift"
+          aria-label="Delete shift"
+        >
+          ✕
+        </button>
+      </div>
     </div>
   );
 }

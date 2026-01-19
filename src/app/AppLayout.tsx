@@ -54,9 +54,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             <div className="text-sm text-slate-600 capitalize">
               {activePage}
             </div>
-            <button className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">
-              + New shift
-            </button>
           </header>
           <main className="p-6">
             {activePage === "dashboard" && children}
