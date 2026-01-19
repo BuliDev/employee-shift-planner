@@ -4,6 +4,7 @@ import type { Employee, Shift } from "../../types/models";
 import { useState } from "react";
 import type { Day } from "./types";
 import { ShiftForm } from "./ShiftForm";
+import { ShiftCell } from "./ShiftCell";
 
 const DAYS: Day[] = [
   { key: "mon", label: "Mon" },
@@ -85,20 +86,6 @@ const WeeklyGrid = () => {
     return shifts.find(
       (shift) => shift.employeeId === employeeId && shift.date === date
     );
-  };
-
-  const getBadge = (shift: Shift) => {
-    if (shift.type === "DAY_OFF") {
-      return {
-        label: "OFF",
-        className: "bg-slate-100 text-slate-700",
-      };
-    }
-
-    return {
-      label: `${shift.type} ${shift.startTime}-${shift.endTime}`,
-      className: "bg-blue-50 text-blue-700",
-    };
   };
 
   const getDayKeyFromDate = (date: string): Day["key"] | null => {
@@ -247,39 +234,11 @@ const WeeklyGrid = () => {
                     key={day.key}
                     className="min-h-[64px] border-l border-slate-200 p-3"
                   >
-                    {!shift ? (
-                      <div className="text-xs text-slate-400">—</div>
-                    ) : (
-                      (() => {
-                        const badge = getBadge(shift);
-                        return (
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => startEditShift(shift)}
-                              className={[
-                                "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
-                                badge.className,
-                                "hover:opacity-80",
-                              ].join(" ")}
-                              title="Edit shift"
-                            >
-                              {badge.label}
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteShift(shift.id)}
-                              className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
-                              title="Delete shift"
-                              aria-label="Delete shift"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        );
-                      })()
-                    )}
+                    <ShiftCell
+                      shift={shift}
+                      onEdit={startEditShift}
+                      onDelete={handleDeleteShift}
+                    />
                   </div>
                 );
               })}
