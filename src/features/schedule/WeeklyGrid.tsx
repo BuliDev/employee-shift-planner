@@ -2,11 +2,8 @@ import type { FormEvent } from "react";
 import { useLocalStorageState } from "../../lib/useLocalStorage";
 import type { Employee, Shift } from "../../types/models";
 import { useState } from "react";
-
-type Day = {
-  key: string;
-  label: string;
-};
+import type { Day } from "./types";
+import { ShiftForm } from "./ShiftForm";
 
 const DAYS: Day[] = [
   { key: "mon", label: "Mon" },
@@ -197,106 +194,24 @@ const WeeklyGrid = () => {
 
   return (
     <div className="rounded-md border border-slate-200 bg-white">
-      <form onSubmit={handleAddShift} className="border-b border-slate-200 p-4">
-        <div className="grid gap-3 sm:grid-cols-5">
-          {/* Employee */}
-          <label className="grid gap-1 text-sm">
-            <span className="text-slate-600">Employee</span>
-            <select
-              value={selectedEmployeeId}
-              onChange={(e) => setSelectedEmployeeId(e.target.value)}
-              className="rounded-md border border-slate-300 bg-white px-3 py-2"
-            >
-              {EMPLOYEES.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {/* Day */}
-          <label className="grid gap-1 text-sm">
-            <span className="text-slate-600">Day</span>
-            <select
-              value={selectedDayKey}
-              onChange={(e) => setSelectedDayKey(e.target.value as Day["key"])}
-              className="rounded-md border border-slate-300 bg-white px-3 py-2"
-            >
-              {DAYS.map((d) => (
-                <option key={d.key} value={d.key}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {/* Type */}
-          <label className="grid gap-1 text-sm">
-            <span className="text-slate-600">Type</span>
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value as Shift["type"])}
-              className="rounded-md border border-slate-300 bg-white px-3 py-2"
-            >
-              <option value="EARLY">EARLY</option>
-              <option value="LATE">LATE</option>
-              <option value="DAY_OFF">DAY_OFF</option>
-            </select>
-          </label>
-
-          {/* Start */}
-          <label className="grid gap-1 text-sm">
-            <span className="text-slate-600">Start</span>
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              disabled={selectedType === "DAY_OFF"}
-              className="rounded-md border border-slate-300 bg-white px-3 py-2 disabled:opacity-50"
-            />
-          </label>
-
-          {/* End */}
-          <label className="grid gap-1 text-sm">
-            <span className="text-slate-600">End</span>
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              disabled={selectedType === "DAY_OFF"}
-              className="rounded-md border border-slate-300 bg-white px-3 py-2 disabled:opacity-50"
-            />
-          </label>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between">
-          {error ? (
-            <div className="text-sm text-red-600">{error}</div>
-          ) : (
-            <div />
-          )}
-
-          <div className="flex items-center gap-2">
-            {editingShiftId && (
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-            )}
-
-            <button
-              type="submit"
-              className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              {editingShiftId ? "Save shift" : "Add shift"}
-            </button>
-          </div>
-        </div>
-      </form>
+      <ShiftForm
+        employees={EMPLOYEES}
+        days={DAYS}
+        selectedEmployeeId={selectedEmployeeId}
+        selectedDayKey={selectedDayKey}
+        selectedType={selectedType}
+        startTime={startTime}
+        endTime={endTime}
+        error={error}
+        isEditing={editingShiftId !== null}
+        onChangeEmployeeId={setSelectedEmployeeId}
+        onChangeDayKey={setSelectedDayKey}
+        onChangeType={setSelectedType}
+        onChangeStartTime={setStartTime}
+        onChangeEndTime={setEndTime}
+        onSubmit={handleAddShift}
+        onCancel={cancelEdit}
+      />
 
       <div className="max-h-[420px] overflow-auto">
         {/* Header row */}
