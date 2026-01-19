@@ -1,3 +1,4 @@
+import { useLocalStorageState } from "../../lib/useLocalStorage";
 import type { Employee, Shift } from "../../types/models";
 
 type Day = {
@@ -28,11 +29,11 @@ const EMPLOYEES: Employee[] = [
   { id: "e10", name: "Mila" },
 ];
 
-const SHIFTS: Shift[] = [
+const SEED_SHIFTS: Shift[] = [
   {
     id: "s1",
     employeeId: "e1",
-    date: "2026-01-13",
+    date: "2026-01-12",
     startTime: "06:00",
     endTime: "14:00",
     type: "EARLY",
@@ -40,7 +41,7 @@ const SHIFTS: Shift[] = [
   {
     id: "s2",
     employeeId: "e2",
-    date: "2026-01-14",
+    date: "2026-01-13",
     startTime: "14:00",
     endTime: "22:00",
     type: "LATE",
@@ -48,7 +49,7 @@ const SHIFTS: Shift[] = [
   {
     id: "s3",
     employeeId: "e3",
-    date: "2026-01-15",
+    date: "2026-01-14",
     startTime: "00:00",
     endTime: "00:00",
     type: "DAY_OFF",
@@ -66,9 +67,14 @@ const WEEK_DAYS: Record<Day["key"], string> = {
 };
 
 const WeeklyGrid = () => {
+  const [shifts, setShifts] = useLocalStorageState<Shift[]>(
+    "shift-planner.shifts",
+    SEED_SHIFTS
+  );
+
   const getShiftForCell = (employeeId: string, dayKey: Day["key"]) => {
     const date = WEEK_DAYS[dayKey];
-    return SHIFTS.find(
+    return shifts.find(
       (shift) => shift.employeeId === employeeId && shift.date === date
     );
   };
