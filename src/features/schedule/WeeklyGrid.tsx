@@ -15,19 +15,6 @@ const DAYS: Day[] = [
   { key: "sun", label: "Sun" },
 ];
 
-const EMPLOYEES: Employee[] = [
-  { id: "e1", name: "Buli" },
-  { id: "e2", name: "Marko" },
-  { id: "e3", name: "Sara" },
-  { id: "e4", name: "Omar" },
-  { id: "e5", name: "Ivan" },
-  { id: "e6", name: "Lana" },
-  { id: "e7", name: "Nina" },
-  { id: "e8", name: "Ema" },
-  { id: "e9", name: "Dino" },
-  { id: "e10", name: "Mila" },
-];
-
 const toISODate = (d: Date) => d.toISOString().slice(0, 10);
 
 const getWeekStartISO = (dateISO: string) => {
@@ -73,7 +60,7 @@ const WeeklyGrid = ({
   const weekDays = buildWeekDays(weekStartISO);
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(
-    EMPLOYEES[0]?.id ?? ""
+    employees[0]?.id ?? ""
   );
   const [selectedDayKey, setSelectedDayKey] = useState<Day["key"]>("mon");
   const [selectedType, setSelectedType] = useState<Shift["type"]>("EARLY");
@@ -81,6 +68,18 @@ const WeeklyGrid = ({
   const [endTime, setEndTime] = useState("14:00");
   const [error, setError] = useState<string | null>(null);
   const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (employees.length === 0) {
+      setSelectedEmployeeId("");
+      return;
+    }
+
+    const exists = employees.some((e) => e.id === selectedEmployeeId);
+    if (!exists) {
+      setSelectedEmployeeId(employees[0].id);
+    }
+  }, [employees, selectedEmployeeId]);
 
   useEffect(() => {
     if (!focusDateISO) return;
@@ -201,7 +200,7 @@ const WeeklyGrid = ({
   return (
     <div className="rounded-md border border-slate-200 bg-white">
       <ShiftForm
-        employees={EMPLOYEES}
+        employees={employees}
         days={DAYS}
         selectedEmployeeId={selectedEmployeeId}
         selectedDayKey={selectedDayKey}
@@ -238,7 +237,7 @@ const WeeklyGrid = ({
 
         {/* Body (placeholder cells) */}
         <div className="divide-y divide-slate-200">
-          {EMPLOYEES.map((emp) => (
+          {employees.map((emp) => (
             <div key={emp.id} className="grid grid-cols-8">
               {/* Left column: employee name */}
               <div className="sticky left-0 z-10 bg-white p-3 text-sm font-medium text-slate-800 shadow-sm">
