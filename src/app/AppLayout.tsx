@@ -8,6 +8,7 @@ import DashboardPage from "../pages/DashboardPage";
 import type { Employee } from "../types/models.ts";
 import { SEED_EMPLOYEES } from "../features/schedule/seed.ts";
 import EmployeesPage from "../pages/EmployeesPage.tsx";
+import SettingsPage from "../pages/SettingsPage.tsx";
 
 const AppLayout = () => {
   const [shifts, setShifts] = useLocalStorageState<Shift[]>(
@@ -19,6 +20,16 @@ const AppLayout = () => {
     "shift-planner.employees",
     SEED_EMPLOYEES
   );
+
+  const resetDemoData = () => {
+    setEmployees(SEED_EMPLOYEES);
+    setShifts(SEED_SHIFTS);
+  };
+
+  const clearAllData = () => {
+    setEmployees([]);
+    setShifts([]);
+  };
 
   const addEmployee = (name: string) => {
     const newEmployee: Employee = {
@@ -130,9 +141,9 @@ const AppLayout = () => {
             )}
 
             {activePage === "settings" && (
-              <PageCard
-                title="Settings"
-                description="Adjust your application settings here."
+              <SettingsPage
+                onResetDemoData={resetDemoData}
+                onClearAllData={clearAllData}
               />
             )}
           </main>
