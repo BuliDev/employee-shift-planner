@@ -33,6 +33,10 @@ const AppLayout = () => {
     setEmployees((prev) => prev.filter((e) => e.id !== id));
   };
 
+  const updateEmployee = (id: string, name: string) => {
+    setEmployees((prev) => prev.map((e) => (e.id === id ? { ...e, name } : e)));
+  };
+
   const [activePage, setActivePage] = useState<
     "dashboard" | "schedule" | "employees" | "settings"
   >("dashboard");
@@ -118,6 +122,7 @@ const AppLayout = () => {
                 employees={employees}
                 onAddEmployee={addEmployee}
                 onDeleteEmployee={deleteEmployee}
+                onUpdateEmployee={updateEmployee}
               />
             )}
 

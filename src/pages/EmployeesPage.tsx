@@ -5,15 +5,20 @@ type EmployeesPageProps = {
   employees: Employee[];
   onAddEmployee: (name: string) => void;
   onDeleteEmployee: (id: string) => void;
+  onUpdateEmployee: (id: string, name: string) => void;
 };
 
 const EmployeesPage = ({
   employees,
   onAddEmployee,
   onDeleteEmployee,
+  onUpdateEmployee,
 }: EmployeesPageProps) => {
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Employees</h1>
@@ -63,20 +68,61 @@ const EmployeesPage = ({
                 key={e.id}
                 className="flex items-center justify-between gap-3 p-4"
               >
-                <div>
-                  <div className="font-medium text-slate-900">{e.name}</div>
-                </div>
+                {editingId === e.id ? (
+                  <div className="flex flex-1 items-center gap-2">
+                    <input
+                      className="w-full rounded-md border border-slate-200 px-2 py-1 text-sm"
+                      value={editingName}
+                      onChange={(ev) => setEditingName(ev.target.value)}
+                    />
 
-                <button
-                  className="rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50"
-                  onClick={() => {
-                    const ok = window.confirm(`Delete ${e.name}?`);
-                    if (!ok) return;
-                    onDeleteEmployee(e.id);
-                  }}
-                >
-                  Delete
-                </button>
+                    <button
+                      className="rounded-md bg-slate-900 px-2 py-1 text-sm text-white"
+                      onClick={() => {
+                        const trimmed = editingName.trim();
+                        if (!trimmed) return;
+                        onUpdateEmployee(e.id, trimmed);
+                        setEditingId(null);
+                      }}
+                    >
+                      Save
+                    </button>
+
+                    <button
+                      className="rounded-md border border-slate-200 px-2 py-1 text-sm"
+                      onClick={() => setEditingId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="font-medium text-slate-900">{e.name}</div>
+
+                    <div className="flex gap-2">
+                      <button
+                        className="rounded-md border border-slate-200 px-2 py-1 text-sm"
+                        onClick={() => {
+                          setEditingId(e.id);
+                          setEditingName(e.name);
+                        }}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
+                        onClick={() => {
+                          const ok = window.confirm(`Delete ${e.name}?`);
+                          if (!ok) return;
+                          onDeleteEmployee(e.id);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>
