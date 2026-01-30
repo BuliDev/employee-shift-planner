@@ -55,6 +55,7 @@ const buildWeekDays = (weekStartISO: string): Record<Day["key"], string> => ({
 });
 
 type WeeklyGridProps = {
+  employees: Employee[];
   shifts: Shift[];
   setShifts: React.Dispatch<React.SetStateAction<Shift[]>>;
   focusDateISO?: string | null;
@@ -62,6 +63,7 @@ type WeeklyGridProps = {
 };
 
 const WeeklyGrid = ({
+  employees,
   shifts,
   setShifts,
   focusDateISO,

@@ -110,6 +110,7 @@ const AppLayout = () => {
 
             {activePage === "schedule" && (
               <WeeklyGrid
+                employees={employees}
                 shifts={shifts}
                 setShifts={setShifts}
                 focusDateISO={scheduleFocusDateISO}
