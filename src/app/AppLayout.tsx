@@ -5,12 +5,29 @@ import type { Shift } from "../types/models.ts";
 import { useLocalStorageState } from "../lib/useLocalStorage.ts";
 import { SEED_SHIFTS } from "../features/schedule/seed.ts";
 import DashboardPage from "../pages/DashboardPage";
+import type { Employee } from "../types/models.ts";
+import { SEED_EMPLOYEES } from "../features/schedule/seed.ts";
+import EmployeesPage from "../pages/EmployeesPage.tsx";
 
 const AppLayout = () => {
   const [shifts, setShifts] = useLocalStorageState<Shift[]>(
     "shift-planner.shifts",
     SEED_SHIFTS
   );
+
+  const [employees, setEmployees] = useLocalStorageState<Employee[]>(
+    "shift-planner.employees",
+    SEED_EMPLOYEES
+  );
+
+  const addEmployee = (name: string) => {
+    const newEmployee: Employee = {
+      id: crypto.randomUUID(),
+      name,
+    };
+
+    setEmployees((prev) => [...prev, newEmployee]);
+  };
 
   const [activePage, setActivePage] = useState<
     "dashboard" | "schedule" | "employees" | "settings"
@@ -93,9 +110,9 @@ const AppLayout = () => {
             )}
 
             {activePage === "employees" && (
-              <PageCard
-                title="Employees"
-                description="View and manage your employees here."
+              <EmployeesPage
+                employees={employees}
+                onAddEmployee={addEmployee}
               />
             )}
 

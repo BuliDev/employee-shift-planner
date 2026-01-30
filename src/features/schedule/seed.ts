@@ -1,4 +1,5 @@
 import type { Shift } from "../../types/models";
+import type { Employee } from "../../types/models";
 
 export const SEED_SHIFTS: Shift[] = [
   {
@@ -25,4 +26,17 @@ export const SEED_SHIFTS: Shift[] = [
     endTime: "00:00",
     type: "DAY_OFF",
   },
+];
+
+export const SEED_EMPLOYEES: Employee[] = [
+  { id: "e1", name: "Buli" },
+  { id: "e2", name: "Marko" },
+  { id: "e3", name: "Sara" },
+  { id: "e4", name: "Omar" },
+  { id: "e5", name: "Ivan" },
+  { id: "e6", name: "Lana" },
+  { id: "e7", name: "Nina" },
+  { id: "e8", name: "Ema" },
+  { id: "e9", name: "Dino" },
+  { id: "e10", name: "Mila" },
 ];
