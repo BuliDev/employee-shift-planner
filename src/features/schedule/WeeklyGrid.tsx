@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import type { Employee, Shift } from "../../types/models";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Day } from "./types";
 import { ShiftForm } from "./ShiftForm";
 import { ShiftCell } from "./ShiftCell";
@@ -28,22 +28,48 @@ const EMPLOYEES: Employee[] = [
   { id: "e10", name: "Mila" },
 ];
 
-const WEEK_DAYS: Record<Day["key"], string> = {
-  mon: "2026-01-12",
-  tue: "2026-01-13",
-  wed: "2026-01-14",
-  thu: "2026-01-15",
-  fri: "2026-01-16",
-  sat: "2026-01-17",
-  sun: "2026-01-18",
+const toISODate = (d: Date) => d.toISOString().slice(0, 10);
+
+const getWeekStartISO = (dateISO: string) => {
+  // Parse as UTC midnight to avoid timezone surprises
+  const d = new Date(`${dateISO}T00:00:00Z`);
+  const day = (d.getUTCDay() + 6) % 7; // Mon=0 ... Sun=6
+  d.setUTCDate(d.getUTCDate() - day);
+  return toISODate(d);
 };
+
+const addDaysISO = (dateISO: string, days: number) => {
+  const d = new Date(`${dateISO}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return toISODate(d);
+};
+
+const buildWeekDays = (weekStartISO: string): Record<Day["key"], string> => ({
+  mon: addDaysISO(weekStartISO, 0),
+  tue: addDaysISO(weekStartISO, 1),
+  wed: addDaysISO(weekStartISO, 2),
+  thu: addDaysISO(weekStartISO, 3),
+  fri: addDaysISO(weekStartISO, 4),
+  sat: addDaysISO(weekStartISO, 5),
+  sun: addDaysISO(weekStartISO, 6),
+});
 
 type WeeklyGridProps = {
   shifts: Shift[];
   setShifts: React.Dispatch<React.SetStateAction<Shift[]>>;
+  focusDateISO?: string | null;
+  onConsumeFocus?: () => void;
 };
 
-const WeeklyGrid = ({ shifts, setShifts }: WeeklyGridProps) => {
+const WeeklyGrid = ({
+  shifts,
+  setShifts,
+  focusDateISO,
+  onConsumeFocus,
+}: WeeklyGridProps) => {
+  const [weekStartISO, setWeekStartISO] = useState("2026-01-12");
+  const weekDays = buildWeekDays(weekStartISO);
+
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(
     EMPLOYEES[0]?.id ?? ""
   );
@@ -54,15 +80,33 @@ const WeeklyGrid = ({ shifts, setShifts }: WeeklyGridProps) => {
   const [error, setError] = useState<string | null>(null);
   const [editingShiftId, setEditingShiftId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!focusDateISO) return;
+
+    const newWeekStart = getWeekStartISO(focusDateISO);
+    setWeekStartISO(newWeekStart);
+
+    const newWeekDays = buildWeekDays(newWeekStart);
+    const entry = Object.entries(newWeekDays).find(
+      ([, d]) => d === focusDateISO
+    );
+
+    if (entry) {
+      setSelectedDayKey(entry[0] as Day["key"]);
+    }
+
+    onConsumeFocus?.();
+  }, [focusDateISO]);
+
   const getShiftForCell = (employeeId: string, dayKey: Day["key"]) => {
-    const date = WEEK_DAYS[dayKey];
+    const date = weekDays[dayKey];
     return shifts.find(
       (shift) => shift.employeeId === employeeId && shift.date === date
     );
   };
 
   const getDayKeyFromDate = (date: string): Day["key"] | null => {
-    const entry = Object.entries(WEEK_DAYS).find(([, d]) => d === date);
+    const entry = Object.entries(weekDays).find(([, d]) => d === date);
     return (entry?.[0] as Day["key"]) ?? null;
   };
 
@@ -99,7 +143,7 @@ const WeeklyGrid = ({ shifts, setShifts }: WeeklyGridProps) => {
       return;
     }
 
-    const date = WEEK_DAYS[selectedDayKey];
+    const date = weekDays[selectedDayKey];
 
     const payload = {
       employeeId: selectedEmployeeId,

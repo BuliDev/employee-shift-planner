@@ -16,7 +16,21 @@ const AppLayout = () => {
     "dashboard" | "schedule" | "employees" | "settings"
   >("dashboard");
 
-  const goToSchedule = () => setActivePage("schedule");
+  const [scheduleFocusDateISO, setScheduleFocusDateISO] = useState<
+    string | null
+  >(null);
+
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+
+  const getTodayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  };
+
+  const goToSchedule = (focusDateISO?: string) => {
+    if (focusDateISO) setScheduleFocusDateISO(focusDateISO);
+    setActivePage("schedule");
+  };
 
   const navItemClass = (isActive: boolean) =>
     [
@@ -63,11 +77,19 @@ const AppLayout = () => {
           </header>
           <main className="p-6">
             {activePage === "dashboard" && (
-              <DashboardPage shifts={shifts} onAddShiftToday={goToSchedule} />
+              <DashboardPage
+                shifts={shifts}
+                onAddShiftToday={() => goToSchedule(getTodayISO())}
+              />
             )}
 
             {activePage === "schedule" && (
-              <WeeklyGrid shifts={shifts} setShifts={setShifts} />
+              <WeeklyGrid
+                shifts={shifts}
+                setShifts={setShifts}
+                focusDateISO={scheduleFocusDateISO}
+                onConsumeFocus={() => setScheduleFocusDateISO(null)}
+              />
             )}
 
             {activePage === "employees" && (
