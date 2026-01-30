@@ -115,6 +115,7 @@ const AppLayout = () => {
                 setShifts={setShifts}
                 focusDateISO={scheduleFocusDateISO}
                 onConsumeFocus={() => setScheduleFocusDateISO(null)}
+                onGoToEmployees={() => setActivePage("employees")}
               />
             )}
 
