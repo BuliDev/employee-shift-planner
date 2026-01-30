@@ -56,6 +56,17 @@ const WeeklyGrid = ({
   focusDateISO,
   onConsumeFocus,
 }: WeeklyGridProps) => {
+  if (employees.length === 0) {
+    return (
+      <div className="rounded-md border border-slate-200 bg-white p-6">
+        <h2 className="text-lg font-semibold">No employees yet</h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Add employees first, then you can assign shifts in the schedule.
+        </p>
+      </div>
+    );
+  }
+
   const [weekStartISO, setWeekStartISO] = useState("2026-01-12");
   const weekDays = buildWeekDays(weekStartISO);
 
