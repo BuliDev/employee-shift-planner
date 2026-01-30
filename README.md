@@ -1,73 +1,85 @@
-# React + TypeScript + Vite
+# Employee Shift Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple employee shift planning application built with React and TypeScript.
+The app allows managing employees, assigning weekly shifts, and persisting data in localStorage.
 
-Currently, two official plugins are available:
+This project was built as a portfolio project to demonstrate real-world React patterns, state management, and data handling.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📸 Screenshots
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Dashboard
 
-## Expanding the ESLint configuration
+![Dashboard](screenshots/dashboard.png)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Schedule
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+![Schedule](screenshots/schedule.png)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Employees
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+![Employees](screenshots/employees.png)
+
+### Settings
+
+![Settings](screenshots/settings.png)
+
+---
+
+## ✨ Features
+
+- Dashboard with quick actions (Add shift for today)
+- Weekly schedule view with sticky header and employee column
+- Create, edit and delete shifts
+- Employees CRUD (create, edit, delete)
+- Automatic removal of shifts when an employee is deleted
+- LocalStorage persistence
+- Settings page:
+  - Reset demo data
+  - Clear all data
+  - Export / Import data as JSON
+- Empty states and basic UX validations
+
+---
+
+## 🛠 Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- LocalStorage (no backend)
+
+---
+
+## ▶️ Run Locally
+
+```bash
+git clone https://github.com/BuliDev/employee-shift-planner.git
+cd employee-shift-planner
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open `http://localhost:5173` in your browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🧠 Project Highlights
+
+- Designing a small but complete front-end application without React Router
+- Managing shared state at the layout level
+- Handling dependent data (employees ↔ shifts) safely
+- Persisting and restoring application state with localStorage
+- Implementing data export and import functionality
+- Improving UX with empty states and confirmation flows
+
+---
+
+## 🚀 Future Improvements
+
+- Week navigation (previous / next week)
+- Drag & drop shift assignment
+- Authentication and backend API
+- Improved notifications (toast messages)
