@@ -31,6 +31,7 @@ const AppLayout = () => {
 
   const deleteEmployee = (id: string) => {
     setEmployees((prev) => prev.filter((e) => e.id !== id));
+    setShifts((prev) => prev.filter((s) => s.employeeId !== id));
   };
 
   const updateEmployee = (id: string, name: string) => {
