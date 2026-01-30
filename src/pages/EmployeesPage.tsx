@@ -4,9 +4,14 @@ import type { Employee } from "../types/models";
 type EmployeesPageProps = {
   employees: Employee[];
   onAddEmployee: (name: string) => void;
+  onDeleteEmployee: (id: string) => void;
 };
 
-const EmployeesPage = ({ employees, onAddEmployee }: EmployeesPageProps) => {
+const EmployeesPage = ({
+  employees,
+  onAddEmployee,
+  onDeleteEmployee,
+}: EmployeesPageProps) => {
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   return (
@@ -54,9 +59,24 @@ const EmployeesPage = ({ employees, onAddEmployee }: EmployeesPageProps) => {
         ) : (
           <ul className="divide-y divide-slate-200">
             {employees.map((e) => (
-              <li key={e.id} className="flex items-center justify-between p-4">
-                <div className="font-medium text-slate-900">{e.name}</div>
-                <div className="text-xs text-slate-500">{e.id}</div>
+              <li
+                key={e.id}
+                className="flex items-center justify-between gap-3 p-4"
+              >
+                <div>
+                  <div className="font-medium text-slate-900">{e.name}</div>
+                </div>
+
+                <button
+                  className="rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50"
+                  onClick={() => {
+                    const ok = window.confirm(`Delete ${e.name}?`);
+                    if (!ok) return;
+                    onDeleteEmployee(e.id);
+                  }}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

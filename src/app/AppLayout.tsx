@@ -29,6 +29,10 @@ const AppLayout = () => {
     setEmployees((prev) => [...prev, newEmployee]);
   };
 
+  const deleteEmployee = (id: string) => {
+    setEmployees((prev) => prev.filter((e) => e.id !== id));
+  };
+
   const [activePage, setActivePage] = useState<
     "dashboard" | "schedule" | "employees" | "settings"
   >("dashboard");
@@ -113,6 +117,7 @@ const AppLayout = () => {
               <EmployeesPage
                 employees={employees}
                 onAddEmployee={addEmployee}
+                onDeleteEmployee={deleteEmployee}
               />
             )}
 
