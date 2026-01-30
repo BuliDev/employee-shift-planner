@@ -142,6 +142,8 @@ const AppLayout = () => {
 
             {activePage === "settings" && (
               <SettingsPage
+                employees={employees}
+                shifts={shifts}
                 onResetDemoData={resetDemoData}
                 onClearAllData={clearAllData}
               />

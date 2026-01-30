@@ -1,9 +1,15 @@
+import type { Employee, Shift } from "../types/models.ts";
+
 type SettingsPageProps = {
+  employees: Employee[];
+  shifts: Shift[];
   onResetDemoData: () => void;
   onClearAllData: () => void;
 };
 
 const SettingsPage = ({
+  employees,
+  shifts,
   onResetDemoData,
   onClearAllData,
 }: SettingsPageProps) => {
@@ -18,6 +24,31 @@ const SettingsPage = ({
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            className="rounded-md border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
+            onClick={() => {
+              const payload = {
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                employees,
+                shifts,
+              };
+
+              const blob = new Blob([JSON.stringify(payload, null, 2)], {
+                type: "application/json",
+              });
+
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "shift-planner-data.json";
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            Export JSON
+          </button>
+
           <button
             className="rounded-md border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
             onClick={() => {
