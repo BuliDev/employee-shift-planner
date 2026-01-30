@@ -31,6 +31,11 @@ const AppLayout = () => {
     setShifts([]);
   };
 
+  const importData = (data: { employees: Employee[]; shifts: Shift[] }) => {
+    setEmployees(data.employees);
+    setShifts(data.shifts);
+  };
+
   const addEmployee = (name: string) => {
     const newEmployee: Employee = {
       id: crypto.randomUUID(),
@@ -146,6 +151,7 @@ const AppLayout = () => {
                 shifts={shifts}
                 onResetDemoData={resetDemoData}
                 onClearAllData={clearAllData}
+                onImportData={importData}
               />
             )}
           </main>

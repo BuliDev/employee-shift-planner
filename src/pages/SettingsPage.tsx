@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Employee, Shift } from "../types/models.ts";
 
 type SettingsPageProps = {
@@ -5,6 +6,7 @@ type SettingsPageProps = {
   shifts: Shift[];
   onResetDemoData: () => void;
   onClearAllData: () => void;
+  onImportData: (data: { employees: Employee[]; shifts: Shift[] }) => void;
 };
 
 const SettingsPage = ({
@@ -12,7 +14,10 @@ const SettingsPage = ({
   shifts,
   onResetDemoData,
   onClearAllData,
+  onImportData,
 }: SettingsPageProps) => {
+  const [importError, setImportError] = useState<string | null>(null);
+
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Settings</h1>
@@ -74,6 +79,54 @@ const SettingsPage = ({
           >
             Clear all data
           </button>
+        </div>
+        <div className="mt-6 border-t border-slate-200 pt-4">
+          <h3 className="text-sm font-medium text-slate-900">Import</h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Import will replace your current employees and shifts.
+          </p>
+
+          <div className="mt-3 flex flex-col gap-2">
+            <input
+              type="file"
+              accept="application/json"
+              className="text-sm"
+              onChange={async (e) => {
+                setImportError(null);
+
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                try {
+                  const text = await file.text();
+                  const parsed = JSON.parse(text);
+
+                  const employees = parsed?.employees;
+                  const shifts = parsed?.shifts;
+
+                  if (!Array.isArray(employees) || !Array.isArray(shifts)) {
+                    setImportError(
+                      "Invalid file format. Expected employees and shifts arrays."
+                    );
+                    return;
+                  }
+
+                  const ok = window.confirm(
+                    "Import data? This will overwrite current data."
+                  );
+                  if (!ok) return;
+
+                  onImportData({ employees, shifts });
+                } catch {
+                  setImportError("Failed to read JSON file.");
+                }
+              }}
+            />
+
+            {importError ? (
+              <div className="text-sm text-red-600">{importError}</div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
