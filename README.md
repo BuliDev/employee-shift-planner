@@ -5,6 +5,8 @@ The app allows managing employees, assigning weekly shifts, and persisting data 
 
 This project was built as a portfolio project to demonstrate real-world React patterns, state management, and data handling.
 
+🔗 Live demo: https://employee-shift-planner.vercel.app
+
 ---
 
 ## 📸 Screenshots
