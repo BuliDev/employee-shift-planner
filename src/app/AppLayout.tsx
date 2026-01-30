@@ -1,13 +1,17 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
 import PageCard from "../components/PageCard.tsx";
 import WeeklyGrid from "../features/schedule/WeeklyGrid.tsx";
+import type { Shift } from "../types/models.ts";
+import { useLocalStorageState } from "../lib/useLocalStorage.ts";
+import { SEED_SHIFTS } from "../features/schedule/seed.ts";
+import DashboardPage from "../pages/DashboardPage";
 
-type AppLayoutProps = {
-  children: ReactNode;
-};
+const AppLayout = () => {
+  const [shifts, setShifts] = useLocalStorageState<Shift[]>(
+    "shift-planner.shifts",
+    SEED_SHIFTS
+  );
 
-const AppLayout = ({ children }: AppLayoutProps) => {
   const [activePage, setActivePage] = useState<
     "dashboard" | "schedule" | "employees" | "settings"
   >("dashboard");
@@ -56,9 +60,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </div>
           </header>
           <main className="p-6">
-            {activePage === "dashboard" && children}
+            {activePage === "dashboard" && <DashboardPage shifts={shifts} />}
 
-            {activePage === "schedule" && <WeeklyGrid />}
+            {activePage === "schedule" && (
+              <WeeklyGrid shifts={shifts} setShifts={setShifts} />
+            )}
 
             {activePage === "employees" && (
               <PageCard

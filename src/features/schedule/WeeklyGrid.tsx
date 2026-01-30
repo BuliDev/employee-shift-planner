@@ -1,5 +1,4 @@
 import type { FormEvent } from "react";
-import { useLocalStorageState } from "../../lib/useLocalStorage";
 import type { Employee, Shift } from "../../types/models";
 import { useState } from "react";
 import type { Day } from "./types";
@@ -29,33 +28,6 @@ const EMPLOYEES: Employee[] = [
   { id: "e10", name: "Mila" },
 ];
 
-const SEED_SHIFTS: Shift[] = [
-  {
-    id: "s1",
-    employeeId: "e1",
-    date: "2026-01-12",
-    startTime: "06:00",
-    endTime: "14:00",
-    type: "EARLY",
-  },
-  {
-    id: "s2",
-    employeeId: "e2",
-    date: "2026-01-13",
-    startTime: "14:00",
-    endTime: "22:00",
-    type: "LATE",
-  },
-  {
-    id: "s3",
-    employeeId: "e3",
-    date: "2026-01-14",
-    startTime: "00:00",
-    endTime: "00:00",
-    type: "DAY_OFF",
-  },
-];
-
 const WEEK_DAYS: Record<Day["key"], string> = {
   mon: "2026-01-12",
   tue: "2026-01-13",
@@ -66,11 +38,12 @@ const WEEK_DAYS: Record<Day["key"], string> = {
   sun: "2026-01-18",
 };
 
-const WeeklyGrid = () => {
-  const [shifts, setShifts] = useLocalStorageState<Shift[]>(
-    "shift-planner.shifts",
-    SEED_SHIFTS
-  );
+type WeeklyGridProps = {
+  shifts: Shift[];
+  setShifts: React.Dispatch<React.SetStateAction<Shift[]>>;
+};
+
+const WeeklyGrid = ({ shifts, setShifts }: WeeklyGridProps) => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(
     EMPLOYEES[0]?.id ?? ""
   );

@@ -1,0 +1,28 @@
+import type { Shift } from "../../types/models";
+
+export const SEED_SHIFTS: Shift[] = [
+  {
+    id: "s1",
+    employeeId: "e1",
+    date: "2026-01-12",
+    startTime: "06:00",
+    endTime: "14:00",
+    type: "EARLY",
+  },
+  {
+    id: "s2",
+    employeeId: "e2",
+    date: "2026-01-13",
+    startTime: "14:00",
+    endTime: "22:00",
+    type: "LATE",
+  },
+  {
+    id: "s3",
+    employeeId: "e3",
+    date: "2026-01-14",
+    startTime: "00:00",
+    endTime: "00:00",
+    type: "DAY_OFF",
+  },
+];
