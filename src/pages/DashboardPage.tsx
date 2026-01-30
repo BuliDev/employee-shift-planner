@@ -2,12 +2,16 @@ import type { Shift } from "../types/models";
 
 type DashboardPageProps = {
   shifts: Shift[];
+  todayISO: string;
   onAddShiftToday: () => void;
 };
 
-const DashboardPage = ({ shifts, onAddShiftToday }: DashboardPageProps) => {
-  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-  const shiftsToday = shifts.filter((s) => s.date === today);
+const DashboardPage = ({
+  shifts,
+  todayISO,
+  onAddShiftToday,
+}: DashboardPageProps) => {
+  const shiftsToday = shifts.filter((s) => s.date === todayISO);
 
   return (
     <div className="space-y-4">
@@ -25,7 +29,7 @@ const DashboardPage = ({ shifts, onAddShiftToday }: DashboardPageProps) => {
       <div className="rounded-md border border-slate-200 bg-white p-4">
         <div className="text-sm text-slate-600">Shifts today</div>
         <div className="mt-1 text-2xl font-semibold">{shiftsToday.length}</div>
-        <div className="mt-2 text-xs text-slate-500">Date: {today}</div>
+        <div className="mt-2 text-xs text-slate-500">Date: {todayISO}</div>
       </div>
     </div>
   );

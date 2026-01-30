@@ -1,5 +1,5 @@
-import type { Shift } from "../../types/models";
-import type { Employee } from "../../types/models";
+import type { Shift } from "../types/models";
+import type { Employee } from "../types/models";
 
 export const SEED_SHIFTS: Shift[] = [
   {

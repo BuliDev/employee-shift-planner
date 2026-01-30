@@ -117,7 +117,7 @@ const WeeklyGrid = ({
     }
 
     onConsumeFocus?.();
-  }, [focusDateISO]);
+  }, [focusDateISO, onConsumeFocus]);
 
   const getShiftForCell = (employeeId: string, dayKey: Day["key"]) => {
     const date = weekDays[dayKey];

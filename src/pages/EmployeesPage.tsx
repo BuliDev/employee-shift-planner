@@ -77,6 +77,7 @@ const EmployeesPage = ({
                     />
 
                     <button
+                      type="button"
                       className="rounded-md bg-slate-900 px-2 py-1 text-sm text-white"
                       onClick={() => {
                         const trimmed = editingName.trim();
@@ -89,6 +90,7 @@ const EmployeesPage = ({
                     </button>
 
                     <button
+                      type="button"
                       className="rounded-md border border-slate-200 px-2 py-1 text-sm"
                       onClick={() => setEditingId(null)}
                     >
@@ -101,6 +103,7 @@ const EmployeesPage = ({
 
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         className="rounded-md border border-slate-200 px-2 py-1 text-sm"
                         onClick={() => {
                           setEditingId(e.id);
@@ -111,6 +114,7 @@ const EmployeesPage = ({
                       </button>
 
                       <button
+                        type="button"
                         className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
                         onClick={() => {
                           const ok = window.confirm(`Delete ${e.name}?`);

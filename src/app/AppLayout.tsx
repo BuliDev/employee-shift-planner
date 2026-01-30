@@ -1,12 +1,11 @@
 import { useState } from "react";
-import PageCard from "../components/PageCard.tsx";
 import WeeklyGrid from "../features/schedule/WeeklyGrid.tsx";
 import type { Shift } from "../types/models.ts";
 import { useLocalStorageState } from "../lib/useLocalStorage.ts";
-import { SEED_SHIFTS } from "../features/schedule/seed.ts";
+import { SEED_SHIFTS } from "../lib/seed.ts";
 import DashboardPage from "../pages/DashboardPage";
 import type { Employee } from "../types/models.ts";
-import { SEED_EMPLOYEES } from "../features/schedule/seed.ts";
+import { SEED_EMPLOYEES } from "../lib/seed.ts";
 import EmployeesPage from "../pages/EmployeesPage.tsx";
 import SettingsPage from "../pages/SettingsPage.tsx";
 
@@ -69,6 +68,8 @@ const AppLayout = () => {
     return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
   };
 
+  const todayISO = getTodayISO();
+
   const goToSchedule = (focusDateISO?: string) => {
     if (focusDateISO) setScheduleFocusDateISO(focusDateISO);
     setActivePage("schedule");
@@ -121,6 +122,7 @@ const AppLayout = () => {
             {activePage === "dashboard" && (
               <DashboardPage
                 shifts={shifts}
+                todayISO={todayISO}
                 onAddShiftToday={() => goToSchedule(getTodayISO())}
               />
             )}
